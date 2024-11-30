@@ -196,7 +196,7 @@ def main():
     model.eval()  # disable dropout
 
     start_context = "Hello, I am"
-
+    # https://openaipublic.blob.core.windows.net/gpt-2/encodings/main/vocab.bpe 从这里下载
     tokenizer = tiktoken.get_encoding("gpt2")
     encoded = tokenizer.encode(start_context)
     encoded_tensor = torch.tensor(encoded).unsqueeze(0)

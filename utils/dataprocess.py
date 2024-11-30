@@ -1,9 +1,8 @@
 import tiktoken
 import torch
 from torch.utils.data import Dataset, DataLoader
-from huggingface_hub import hf_hub_download
-from model.llama_tokenizer import LlamaTokenizer
-
+from model.llama2_tokenizer import  Llama2Tokenizer
+from model.llama3_tokenizer import  LLama3Tokenizer
 
 class GPTDatasetV1(Dataset):
     def __init__(self, txt, tokenizer, max_length, stride):
@@ -67,16 +66,24 @@ def create_dataloader_v1(txt, batch_size=4, max_length=256,
 
 def create_dataloader_for_llama2(txt, batch_size=4, max_length=256,
                                  stride=128, shuffle=True, drop_last=True, num_workers=0):
-    # Initialize the tokenizer
 
-    # tokenizer = tiktoken.get_encoding("gpt2")
+    tokenizer = Llama2Tokenizer("/Users/luxun/workspace/ai/mine/llm_pretrain/data/llama2-tokenizer.model")
 
-    tokenizer_file = hf_hub_download(
-        repo_id="NousResearch/Llama-2-7b-chat-hf",
-        filename="tokenizer.model",
-        local_dir=".temp/Llama-2-7b"
-    )
-    tokenizer = LlamaTokenizer(tokenizer_file)
+    # Create dataset
+    dataset = LLamaDataset(txt, tokenizer, max_length, stride)
+
+    # Create dataloader
+    dataloader = DataLoader(
+        dataset, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last, num_workers=num_workers)
+
+    return dataloader
+
+
+
+def create_dataloader_for_llama3(txt, batch_size=4, max_length=256,
+                                 stride=128, shuffle=True, drop_last=True, num_workers=0):
+
+    tokenizer = LLama3Tokenizer("/Users/luxun/workspace/ai/mine/llm_pretrain/data/llama3-tokenizer.model")
 
     # Create dataset
     dataset = LLamaDataset(txt, tokenizer, max_length, stride)
